@@ -30,23 +30,10 @@ returnFirstArgument(3);
  Пример:
    sumWithDefaults(10) вернет 110
  */
-function sumWithDefaults(a, b) {
-    
+function sumWithDefaults(a, b = 100) { // https:developer.mozilla.org/ru/docs/Web/JavaScript/Reference/Functions/Default_parameters
     return a + b;
 }
 sumWithDefaults(3, 4);
-
-/*
-2.1 *: Значение по умолчанию для второго аргумента должно быть равно 100
-*/
-
-function sumWithHundret(a) {
-    
-    var b = 100;
-  
-    return (a + b);
-}
-sumWithHundret(10);
 
 /*
  Задание 3:
@@ -57,14 +44,9 @@ sumWithHundret(10);
    returnFnResult(() => 'привет') вернет 'привет'
  */
 function returnFnResult(fn) {
-
-    return function () {
-        return 'привет!';
-    }
+    
+    return fn()
 }
-
-returnFnResult();
-
 /*
  Задание 4:
 
@@ -78,17 +60,16 @@ returnFnResult();
    console.log(f()); // выведет 12
    console.log(f()); // выведет 13
  */
-function returnCounter(number) {
-  
+function returnCounter(number = 0) {
     var f = function () {
-        number++;
-      
-        return number;
-    }
-
-    return f();
+        
+        return (number=number + 1);
+    };
+    
+    return f;
 }
-returnCounter(10);
+returnCounter(0);
+
 /*
  Задание 5 *:
 
@@ -100,11 +81,11 @@ returnCounter(10);
  */
 function returnArgumentsArray(...args) { // https://developer.mozilla.org/ru/docs/Web/JavaScript/Reference/Functions/Rest_parameters
     var array = args;
-  
+
     return array;
 }
 
-returnArgumentsArray(1, 3, 4, 5);
+returnArgumentsArray(1, 3, 4, 5, 6, 7, 8);
 /*
  Задание 6 *:
 
@@ -120,7 +101,10 @@ returnArgumentsArray(1, 3, 4, 5);
 
    console.log(newSum()) выведет 6
  */
-function bindFunction(fn) {}
+function bindFunction(fn, ...args) {
+
+    return fn.bind(1, ...args);
+}
 
 export {
     returnFirstArgument,
