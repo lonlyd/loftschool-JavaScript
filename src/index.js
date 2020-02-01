@@ -15,7 +15,6 @@
 function returnFirstArgument(value) {
     return (value);
 }
-returnFirstArgument(3);
 /*
  Задание 2:
 
@@ -33,8 +32,6 @@ returnFirstArgument(3);
 function sumWithDefaults(a, b = 100) { // https:developer.mozilla.org/ru/docs/Web/JavaScript/Reference/Functions/Default_parameters
     return a + b;
 }
-sumWithDefaults(3, 4);
-
 /*
  Задание 3:
 
@@ -63,7 +60,7 @@ function returnFnResult(fn) {
 function returnCounter(number = 0) {
     var f = function () {
         
-        return (number=number + 1);
+        return ++number;
     };
     
     return f;
