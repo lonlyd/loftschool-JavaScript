@@ -43,10 +43,10 @@ function reduce(array, fn, initial) {
     let i = 0;
     if (initial == undefined) {
         prev = array[0];
-        i = 0;
+        i = 1;
     } else {
         prev = initial;
-        i = 1;
+        i = 0;
     }
     for (i; i < array.length; i++) {
         const element = array[i];
