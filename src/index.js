@@ -40,18 +40,22 @@ function map(array, fn) {
  */
 function reduce(array, fn, initial) {
     let prev = 0;
-
+    let i = 0;
     if (initial == undefined) {
         prev = array[0];
+        i = 0;
     } else {
         prev = initial;
+        i = 1;
     }
-    for (let i = 0; i < array.length; i++) {
+    for (i; i < array.length; i++) {
         const element = array[i];
 
         prev = fn(prev, element, i, array);
         
     }
+    
+    return prev;
 }
 /*
  Задание 4:
