@@ -22,7 +22,7 @@ function isAllTrue(array, fn) {
     }
     if ((array instanceof Array == false) || (array.length === 0)) {
         throw new Error('empty array');
-    } else if (typeof fn() == 'function') {
+    } else if (typeof fn !== 'function') {
         throw new Error('fn is not a function');
     } 
     if (element === false) {
@@ -53,7 +53,7 @@ function isSomeTrue(array, fn) {
     }
     if ((array instanceof Array === false) || (array.length == 0)) {
         throw new Error('empty array');
-    } else if (typeof fn() === 'function') {
+    } else if (typeof fn !== 'function') {
         throw new Error('fn is not a function');
     } 
     if (element === true) {
@@ -74,20 +74,24 @@ function isSomeTrue(array, fn) {
  3.3: Необходимо выбрасывать исключение в случаях:
    - fn не является функцией (с текстом "fn is not a function")
  */
-function returnBadArguments(fn, ...args) {
-    var array = [];
-
-    array.push(...args);
-    for (let i = 0; i < array.length; i++) {
-        const element = array[i];
-
-        throw fn(element);
-    }
-    if (typeof fn() === 'function') {
+function returnBadArguments(fn) {
+    if (typeof fn !== 'function') {
         throw new Error('fn is not a function');
     }
     try {
-        return (array);
+        var array = [];
+
+        for (let i = 1; i < arguments.length; i++) {
+            let element = arguments[i];
+
+            try {
+                fn(element);
+            } catch (e) {
+                array.push(element);
+            }
+        } 
+        
+        return array;
     } catch (e) {
         console.log(e.message);
     }
@@ -110,60 +114,59 @@ function returnBadArguments(fn, ...args) {
    - number не является числом (с текстом "number is not a number")
    - какой-либо из аргументов div является нулем (с текстом "division by 0")
  */
-function calculator(number = 0, ...args) {
+function calculator(number = 0) {
+    if (!isFinite(number)) { 
+        throw new Error ('number is not a number');
+    }
     var arg = [];
 
-    for (let i = 0; i < args.length; i++) {
-        const element = args[i];
+    for (let i = 1; i < arguments.length; i++) {
+        const element = arguments[i];
 
         arg.push(element);
     }
     var obj = {
-        sum: function (number, arg) {
-            for (let i = 0; i < arg.length; i++) {
-                const element = arg[i];
-                var result = number + element;
-                
-                return result;
-            }
+        sum: function () {
+            var array = [...arguments];
+            var result = array.reduce ((sum, current) => { 
+                return sum + current 
+            }, number);
+
+            return result;
         },
-        dif: function (number, arg) {
-            for (let i = 0; i < arg.length; i++) {
-                const element = arg[i];
-                var result = number - element;
-                
-                return result;
-            }
+        dif: function () {
+            var array = [...arguments];
+            var result = array.reduce ((sum, current) => {
+                return sum - current 
+            }, number);
+
+            return result;
         },
-        div: function (number, arg) {
-            for (let i = 0; i < arg.length; i++) {
-                const element = arg[i];
-                if (element < 0) {
-                    throw new Error('На ноль делать нельзя');
-                } else {
-                    var result = number / element;
-                    
-                    return result;
-                }
-            }
+        div: function () {
+            var array = [...arguments];
+            var result = array.reduce (function(sum, current) {
+                if (current === 0) {
+                    throw new Error('На ноль делить нельзя');
+                } 
+
+                return sum / current;
+            }, number);
+
+            return result;
         },
-        mul: function (number, arg) {
-            for (let i = 0; i < arg.length; i++) {
-                const element = arg[i];
-                var result = number * element;
-                
-                return result;
-            }
+        mul: function () {
+            var array = [...arguments];
+            var result = array.reduce ((sum, current) => {
+                return sum * current 
+            }, number);
+
+            return result;
         }
     }
 
-    if (!isFinite(number)) { 
-        throw new Error ('number is not a number');
-    }
     try {
         return obj;
-    }
-    catch (e) {
+    } catch (e) {
         console.log(e.message);
     }
 
