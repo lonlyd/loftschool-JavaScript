@@ -75,16 +75,22 @@ function isSomeTrue(array, fn) {
    - fn не является функцией (с текстом "fn is not a function")
  */
 function returnBadArguments(fn, ...args) {
-    var arr = fn(args);
-    args.forEach(arr);
+    var array = [];
+
+    array.push(...args);
+    for (let i = 0; i < array.length; i++) {
+        const element = array[i];
+
+        throw fn(element);
+    }
+    if (typeof fn() === 'function') {
+        throw new Error('fn is not a function');
+    }
     try {
-        if (typeof fn() === 'function') {
-            throw new Error('fn is not a function');
-            
-        }
+        return (array);
     } catch (e) {
         console.log(e.message);
-}
+    }
 }
 
 /*
@@ -104,7 +110,63 @@ function returnBadArguments(fn, ...args) {
    - number не является числом (с текстом "number is not a number")
    - какой-либо из аргументов div является нулем (с текстом "division by 0")
  */
-function calculator() {
+function calculator(number = 0, ...args) {
+    var arg = [];
+
+    for (let i = 0; i < args.length; i++) {
+        const element = args[i];
+
+        arg.push(element);
+    }
+    var obj = {
+        sum: function (number, arg) {
+            for (let i = 0; i < arg.length; i++) {
+                const element = arg[i];
+                var result = number + element;
+                
+                return result;
+            }
+        },
+        dif: function (number, arg) {
+            for (let i = 0; i < arg.length; i++) {
+                const element = arg[i];
+                var result = number - element;
+                
+                return result;
+            }
+        },
+        div: function (number, arg) {
+            for (let i = 0; i < arg.length; i++) {
+                const element = arg[i];
+                if (element < 0) {
+                    throw new Error('На ноль делать нельзя');
+                } else {
+                    var result = number / element;
+                    
+                    return result;
+                }
+            }
+        },
+        mul: function (number, arg) {
+            for (let i = 0; i < arg.length; i++) {
+                const element = arg[i];
+                var result = number * element;
+                
+                return result;
+            }
+        }
+    }
+
+    if (!isFinite(number)) { 
+        throw new Error ('number is not a number');
+    }
+    try {
+        return obj;
+    }
+    catch (e) {
+        console.log(e.message);
+    }
+
 }
 
 /* При решении задач, пострайтесь использовать отладчик */
