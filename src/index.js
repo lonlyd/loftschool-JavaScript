@@ -146,7 +146,7 @@ function calculator(number = 0) {
             var array = [...arguments];
             var result = array.reduce (function(sum, current) {
                 if (current === 0) {
-                    throw new Error('На ноль делить нельзя');
+                    throw new Error('division by 0');
                 } 
 
                 return sum / current;
