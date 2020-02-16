@@ -55,7 +55,7 @@ function findAllPSiblings(where) {
     
     for (let child of children) {
         
-        if (child.nextSibling.tagName === 'P') {
+        if (child.nextElementSibling && child.nextElementSibling.tagName === 'P') {
             array.push(child);
         }
     }
@@ -128,9 +128,12 @@ function deleteTextNodesRecursive(where) {
     var result,
         children = where.childNodes;
 
-    for (let child of children) {
-        if (child.hasChildNodes()) {
-            result = child.removeChild(textContent);
+    for (let i = 0; i < children.length; i++) {
+        let child = children[i];
+        
+        if (child.nodeType == Node.TEXT_NODE) {
+            result = where.removeChild(child);
+            i--;
         } else {
             deleteTextNodesRecursive(child);
         }
