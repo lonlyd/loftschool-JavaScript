@@ -107,7 +107,7 @@ function deleteTextNodes(where) {
         children = where.childNodes;
 
     for (let child of children) {
-        result = where.removeChild(child);
+        where.removeChild(child);
     }
 
     return result;
@@ -132,14 +132,12 @@ function deleteTextNodesRecursive(where) {
         let child = children[i];
         
         if (child.nodeType == Node.TEXT_NODE) {
-            result = where.removeChild(child);
+            where.removeChild(child);
             i--;
         } else {
             deleteTextNodesRecursive(child);
         }
     }
-
-    return result;
 }
 
 /*
