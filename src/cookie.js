@@ -45,28 +45,48 @@ const listTable = homeworkContainer.querySelector('#list-table tbody');
 
 filterNameInput.addEventListener('keyup', function () {
     // здесь можно обработать нажатия на клавиши внутри текстового поля для фильтрации cookie
-    const valueFilter = filterNameInput.value;
-    const coockies = cookieParcer();
+    const filterValue = filterNameInput.value;
 });
 
 addButton.addEventListener('click', () => {
     // здесь можно обработать нажатие на кнопку "добавить cookie"
     const name = addNameInput.value;
     const value = addValueInput.value;
+    const filterValue = filterNameInput.value;
 
     addTable(name, value);
+    addCookie(name, value);
+    if (filterValue) {
+        if (isMatching(name, filterValue)) {
+            addTable(name, value);
+        }
+    }
+
 });
 
 document.addEventListener('DOMContentLoad', function () {
-    //действия после загрузки дом дерева. Нужно загрузить все имеющиеся куки и распарсить их в таблицу
+    // действия после загрузки дом дерева. Нужно загрузить все имеющиеся куки и распарсить их в таблицу
     let cookies = cookieParcer();
 
     loadCookie(cookies);
+    listTable.addEventListener('click', e => {
+        if (e.target.classList.contains('BUTTON')) {
+            deleteCookie(e.target.cookie.name);
+        }
+    })
 
 })
 
+function isMatching (string, filterValue) {
+    return string.indexOf(filterValue) > -1;
+}
+
+function addCookie(name, value) {
+    document.cookie = `${ name } = ${ value };`;
+}
+
 function loadCookie(cookies) {
-    //загрузка имеющихся куки и добавление в таблицу
+    // загрузка имеющихся куки и добавление в таблицу
     listTable.innerHTML = '';
     for (let key in cookies) {
         if (cookies.hasOwnProperty(key)) {
@@ -76,7 +96,7 @@ function loadCookie(cookies) {
 }
 
 function addTable(name, value) {
-    //создание таблицы с name и value, плюс создание кнопки удалить
+    // создание таблицы с name и value, плюс создание кнопки удалить
     let table = document.createElement('TABLE');
     let tbody = document.createElement('TBODY');
     let tr = document.createElement('TR');
@@ -98,8 +118,12 @@ function addTable(name, value) {
     return table;
 }
 
+function deleteCookie(name) {
+    document.cookie = `${name}=''`;
+}
+
 function cookieParcer() {
-    //парсинг имеющихся куки
+    // парсинг имеющихся куки
     let cookie = document.cookie;
 
     return cookie.split('; ').reduce((prev, current) => {
