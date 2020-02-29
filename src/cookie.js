@@ -46,6 +46,10 @@ const listTable = homeworkContainer.querySelector('#list-table tbody');
 filterNameInput.addEventListener('keyup', function () {
     // здесь можно обработать нажатия на клавиши внутри текстового поля для фильтрации cookie
     const filterValue = filterNameInput.value;
+    const cookies = cookieParcer();
+    const filter = cookieFilter(filterValue, cookies);
+
+    loadCookie(filter);
 });
 
 addButton.addEventListener('click', () => {
@@ -53,13 +57,17 @@ addButton.addEventListener('click', () => {
     const name = addNameInput.value;
     const value = addValueInput.value;
     const filterValue = filterNameInput.value;
+    const cookies = cookieParcer();
 
-    addTable(name, value);
     addCookie(name, value);
     if (filterValue) {
-        if (isMatching(name, filterValue)) {
+        if (isMatching(name, filterValue) || isMatching(value, filterValue)) {
             addTable(name, value);
+        } else if (cookies.hasOwnProperty(name) && !isMatching(value, filterValue)) {
+            deleteTr(getTr(name));
         }
+    } else {
+        loadCookie(cookieParcer());
     }
 
 });
@@ -67,59 +75,70 @@ addButton.addEventListener('click', () => {
 document.addEventListener('DOMContentLoad', function () {
     // действия после загрузки дом дерева. Нужно загрузить все имеющиеся куки и распарсить их в таблицу
     let cookies = cookieParcer();
+    let button = listTable.querySelectorAll('.button');
 
     loadCookie(cookies);
-    listTable.addEventListener('click', e => {
-        if (e.target.classList.contains('BUTTON')) {
-            deleteCookie(e.target.cookie.name);
-        }
-    })
 
-})
+    button.addEventListener('click', () => {
+        deleteCookie(button.dataset.name);
+        deleteTr(getTr(button.dataset.name));
+    })
+});
 
 function isMatching (string, filterValue) {
-    return string.indexOf(filterValue) > -1;
+    let regexp = new RegExp(filterValue, 'i');
+
+    return string.search(regexp) > -1;
 }
 
 function addCookie(name, value) {
-    document.cookie = `${ name } = ${ value };`;
+    if (name) {
+        document.cookie = `${name} = ${value};`;
+    }
 }
 
 function loadCookie(cookies) {
     // загрузка имеющихся куки и добавление в таблицу
     listTable.innerHTML = '';
-    for (let key in cookies) {
-        if (cookies.hasOwnProperty(key)) {
-            addTable(key, cookies[key]);
+    for (let cookie in cookies) {
+        if (cookies.hasOwnProperty(cookie)) {
+            addTable(cookie, cookies[cookie]);
         }
     }
 }
 
 function addTable(name, value) {
     // создание таблицы с name и value, плюс создание кнопки удалить
-    let table = document.createElement('TABLE');
-    let tbody = document.createElement('TBODY');
     let tr = document.createElement('TR');
     let tdName = document.createElement('TD');
     let tdValue = document.createElement('TD');
     let tdDel = document.createElement('TD');
     let button = document.createElement('BUTTON');
 
-    table.appendChild(tbody);
-    tbody.appendChild(tr);
+    tdName.innerText = name;
+    tdValue.innerText = value;
+    button.innerText = 'Удалить';
+
+    button.dataset.name = name;
+    button.classList.add('button');
+    tdDel.appendChild(button);
+    tr.classList.add(name);
     tr.appendChild(tdName);
     tr.appendChild(tdValue);
     tr.appendChild(tdDel);
-    tdDel.appendChild(button);
-    tdName.innerText = name;
-    tdValue.innerText = value;
-    button.innerText = 'Delete';
+    listTable.appendChild(tr);
+}
 
-    return table;
+function getTr(name) {
+    return document.getElementsByClassName(name)[0];
 }
 
 function deleteCookie(name) {
     document.cookie = `${name}=''`;
+}
+
+function deleteTr(tr) {
+    tr.parentNode.removeChild(tr);
 }
 
 function cookieParcer() {
@@ -132,7 +151,20 @@ function cookieParcer() {
         prev[name] = value;
 
         return prev;
-    }, {});
+    }, {})
 
 }
 
+function cookieFilter(value, cookies) {
+    let cookieList = {};
+
+    for (let cookie in cookies) {
+        if (isMatching(cookie, value) || isMatching(cookies[cookie], value)) {
+            if (cookies.hasOwnProperty(cookie)) {
+                cookieList[cookie] = cookies[cookie];
+            }
+        }
+    }
+
+    return cookieList;
+}
