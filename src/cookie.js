@@ -75,14 +75,10 @@ addButton.addEventListener('click', () => {
 document.addEventListener('DOMContentLoad', function () {
     // действия после загрузки дом дерева. Нужно загрузить все имеющиеся куки и распарсить их в таблицу
     let cookies = cookieParcer();
-    let button = listTable.querySelectorAll('.button');
 
     loadCookie(cookies);
 
-    button.addEventListener('click', () => {
-        deleteCookie(button.dataset.name);
-        deleteTr(getTr(button.dataset.name));
-    })
+
 });
 
 function isMatching (string, filterValue) {
@@ -127,6 +123,11 @@ function addTable(name, value) {
     tr.appendChild(tdValue);
     tr.appendChild(tdDel);
     listTable.appendChild(tr);
+
+    button.addEventListener('click', () => {
+        deleteCookie(button.dataset.name);
+        deleteTr(getTr(button.dataset.name));
+    })
 }
 
 function getTr(name) {
@@ -134,7 +135,7 @@ function getTr(name) {
 }
 
 function deleteCookie(name) {
-    document.cookie = `${name}=''`;
+    document.cookie = `${name}='';expires=${new Date(0)}`;
 }
 
 function deleteTr(tr) {
