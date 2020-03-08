@@ -37,8 +37,7 @@
     ],
     "max-len": [
       "error",
-      120,
-      { "ignoreComments": true }
+      120
     ],
     "newline-after-var": "error",
     "newline-before-return": "error",
