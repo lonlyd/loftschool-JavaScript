@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>LoftMessenger</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="contact__list">
+            <ul>
+                <li class="contact__list title">
+                    <div class="main__menu">
+                        <span id="burger">
+                            <i class="fas fa-bars"></i>
+                        </span>
+                        <span class="search">
+                            <input type="text" placeholder="Поиск..." id="search" />
+                        </span>
+                    </div>
+                </li>
+                <ul class="contact" id="contact">
+                    <li class="name">Stive</li>
+                    <li class="last__message">Good night</li>
+                    <li class="name">Ann</li>
+                    <li class="last__message">Cleopatra</li>
+                    <li class="name">Cleopatra</li>
+                    <li class="last__message">Sister</li>
+                    <li class="name">Sister</li>
+                    <li class="last__message">Mother</li>
+                    <li class="name">Mother</li>
+                    <li class="last__message">Mother</li>
+                </ul>
+            </ul>
+        </div>
+
+        <div class="chat__list">
+            <ul class="pages">
+                <li class="chat page">
+                    <div class="chatArea">
+                        <ul class="messages"></ul>
+                        <input class="inputMessage" placeholder="Введите сообщение..." />
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <div class="modal">
+            <li class="login">
+                <div class="form">
+                    <h1 class="title">АВТОРИЗАЦИЯ</h1>
+                    <h3 class="title">Введите Ф.И.О.</h3>
+                    <input class="usernameInput" type="text" maxlength="14" />
+                </div>
+            </li>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/index.js"></script>
+    <script src="https://kit.fontawesome.com/b6341b1a2d.js" crossorigin="anonymous"></script>
+</body>
+
+</html>
