@@ -74,5 +74,4 @@ io.on('connection', (socket) => {
     }
   });
 
-  // console.log(io.sockets.clients());
 });

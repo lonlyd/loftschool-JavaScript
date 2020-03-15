@@ -22,16 +22,6 @@
                     </div>
                 </li>
                 <ul class="contact" id="contact">
-                    <li class="name">Stive</li>
-                    <li class="last__message">Good night</li>
-                    <li class="name">Ann</li>
-                    <li class="last__message">Cleopatra</li>
-                    <li class="name">Cleopatra</li>
-                    <li class="last__message">Sister</li>
-                    <li class="name">Sister</li>
-                    <li class="last__message">Mother</li>
-                    <li class="name">Mother</li>
-                    <li class="last__message">Mother</li>
                 </ul>
             </ul>
         </div>
@@ -40,24 +30,43 @@
             <ul class="pages">
                 <li class="chat page">
                     <div class="chatArea">
+                        <span class="status__line">Чат</span>
                         <ul class="messages"></ul>
-                        <input class="inputMessage" placeholder="Введите сообщение..." />
+                        <span><input class="inputMessage" type="text" placeholder="Введите сообщение..." >
+                        <input id="sendButton" class="sendButton" type="submit"></span>
                     </div>
                 </li>
             </ul>
         </div>
 
         <div class="modal">
-            <li class="login">
+            <div class="login">
                 <div class="form">
-                    <h1 class="title">АВТОРИЗАЦИЯ</h1>
-                    <h3 class="title">Введите Ф.И.О.</h3>
-                    <input class="usernameInput" type="text" maxlength="14" />
+                    <h1 class="title">Авторизация</h1>
+                    <input class="usernameInput" type="text" placeholder="Введите фамилию и имя"  autofocus required/>
+                    <br>
+                    <input class="userNicknameInput" id="userNicknameInput" type="text" placeholder="Введите свой ник" maxlength="14" required/>
+                    <br>
+                    <button id="loginButton">ВОЙТИ</button>
                 </div>
-            </li>
+            </div>
+        </div>
+
+        <div class="userpic">
+            <div class="login">
+                <div class="form">
+                    <h1 class="title">Загрузка фото</h1>
+                    <img src="" class="" id="userpic">
+                    <br>
+                    <input type="file" id="userpicInput"/>
+                    <br>
+                    <button id="loadPic">ЗАГРУЗИТЬ</button>
+                    <button id="closePic">ЗАКРЫТЬ</button>
+                </div>
+            </div>
         </div>
     </div>
-    <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+    <!-- <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script> -->
     <script src="/socket.io/socket.io.js"></script>
     <script src="/index.js"></script>
     <script src="https://kit.fontawesome.com/b6341b1a2d.js" crossorigin="anonymous"></script>
