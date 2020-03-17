@@ -143,7 +143,7 @@ ul {
 
 .login .form {
     height: 100px;
-    margin-top: -150px;
+    margin-top: -200px;
     position: absolute;
     margin-left: auto;
     margin-right: auto;
@@ -343,6 +343,7 @@ ul {
     height: 100%;
     width: 100%;
     background-color: #17212B;
+    color: #ffffff;
 
 }
 
@@ -350,6 +351,8 @@ ul {
     height: 300px;
     width: 300px;
     z-index: 1;
-    border: none;
+    border: solid 1px gray;
     overflow: hidden;
+    object-fit: cover;
+    border-radius: 100%;
 }

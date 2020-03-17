@@ -14,12 +14,12 @@ var inputMessage = document.querySelector('.inputMessage'); // Input message inp
 var sendButton = document.getElementById('sendButton'); //Send button
 
 var burger = document.getElementById('burger');
-var userpic = document.querySelector('.userpic');
+var userpicmodal = document.querySelector('.userpic');
 var userpicImg = document.getElementById('userpic');
 var userpicInput = document.getElementById('userpicInput');
 var loadPic = document.getElementById('loadPic');
 var closePic = document.getElementById('closePic');
-
+var contactData = {};
 var date;
 
 // Prompt for setting a username
@@ -41,21 +41,38 @@ const login = (usernameInput) => {
     } else {
         socket.emit('add user', username);
         loginPage.style.display = "none";
-        contactList.style.display = "block";
-        chatList.style.display = "block";
-
+        userpicmodal.style.display = "table";
     };
 }
-const addContact = (username) => {
-    let li = document.createElement('li');
-    li.classList.add('contact');
-    li.innerHTML = `<div class="photo" style="background-image: url('${userpicResult}')"></div>
-    <div class="contact__data" id="${socket.id}">
-    <span class="name">${username}</span>
-    <span class="last__message">${inputMessage}</span></div>`;
-    contact.appendChild(li);
+// const contactDataAdd = function (id, userpic) {
+//     contactData = {
+//         id: id,
+//         userpic: userpic
+//     };
+    
+//     return contactData;
+// }
+
+const addToLocalStorage = function (socketid, userpic) {
+    localStorage.setItem(socketid, userpic);
 }
 
+const addContact = (username) => {
+    let id = socket.id;
+    let keys = Object.keys(localStorage);
+    for(let key of keys) {
+        if (username == key) {
+            let userpicture = localStorage.getItem(key);
+            let li = document.createElement('li');
+            li.classList.add('contact');
+            li.innerHTML = `<div class="photo" style="background-image: url('${userpicture}')"></div>
+            <div class="contact__data" id="${id}">
+            <span class="name">${username}</span>
+            <span class="last__message">${message}</span></div>`;
+            contact.appendChild(li);
+        }
+    }
+}
 const removeContact = (id) => {
     let contactToRemove = document.getElementById(id);
     contactToRemove.parentNode.parentNode.removeChild(contactToRemove.parentNode);
@@ -64,11 +81,16 @@ const removeContact = (id) => {
 // Button events
 loginButton.addEventListener('click', () => {
     login(usernameInput);
+    userpicForm();
+    userpicSelect();
+
 });
 
 sendButton.addEventListener('click', () => {
-    sendMessage(inputMessage);
-    inputMessage.value = '';
+    if (inputMessage.value != '') {
+        sendMessage(inputMessage);
+        inputMessage.value = '';
+    }
 })
 
 // Press Enter
@@ -86,13 +108,20 @@ chatList.addEventListener('keydown', (e) => {
 
 const addChatMessage = (message) => {
     date = new Date().toLocaleString();
-    let li = document.createElement('li');
-    li.innerHTML = `<span class="photo" style="background-image: url('${userpicResult}')"></span>
-    <span class="messageBody">
-        <span class="message">${message}</span> 
-        <span class="message__date">${date}</span>
-    </<span>`;
-    messages.appendChild(li);
+    let keys = Object.keys(localStorage);
+    console.log(username, socket.id);
+    for(let key of keys) {
+        if (username == key) {
+            let userpicture = localStorage.getItem(key);
+            let li = document.createElement('li');
+            li.innerHTML = `<span class="photo" style="background-image: url('${userpicture}')"></span>
+            <span class="messageBody">
+                <span class="message">${message}</span> 
+                <span class="message__date">${date}</span>
+            </<span>`;
+            messages.appendChild(li);
+        }
+    }
 
 }
 
@@ -105,25 +134,39 @@ const sendMessage = (inputMessage) => {
 const replaceLastMessage = (message) => {
 
 }
+
 // Socket events
 
 // Whenever the server emits 'login', log the login message
-socket.on('login', () => {
+socket.on('login', (data) => {
     connected = true;
+    console.log(socket.id);
+    console.log(data.userData + ' дата при логине');
+    // addToLocalStorage(socket.id, userpic);
+
 });
+
 
 // Whenever the server emits 'new message', update the chat body
 socket.on('new message', (data) => {
     addChatMessage(data.message);
     console.log(data);
+    if (!username) {
+        socket.emit('add user', username);
+        addContact(data.username);
+        addParticipantsMessage(data);
+        console.log('дошёл сюда!');
+    }
+
 });
 
 // Whenever the server emits 'user joined', log it in the chat body
 socket.on('user joined', (data) => {
-    console.log(data.username + ' присоединился к чату');
+    console.log(data + ' дата при join');
     addContact(data.username);
     addParticipantsMessage(data);
-    
+    addToLocalStorage(data.username, userpic);
+
 });
 
 // Whenever the server emits 'user left', log it in the chat body
@@ -168,7 +211,8 @@ const userpicSelect = () => {
 
     fileReader.addEventListener('load', () => {
         userpicImg.src = fileReader.result;
-        userpicResult = userpicImg.src;
+        userpic = userpicImg.src;
+
     });
 
     userpicInput.addEventListener('change', (e) => {
@@ -186,24 +230,25 @@ const userpicSelect = () => {
 
 // Burger menu
 burger.addEventListener('click', () => {
-    if (userpicImg.src = '') {
-        userpicImg.style.display = "none";
-    } else {
-        userpic.style.display = "block";
-    };
     userpicForm();
     userpicSelect();
-    loadPic.addEventListener('click', () => {
-        
-        userpic.style.display = "none";
-    })
+
 });
 
-const userpicForm = () => {
-    userpic.style.display = "table";
+loadPic.addEventListener('click', () => {
+    userpicmodal.style.display = "none";
+    contactList.style.display = "block";
+    chatList.style.display = "block";
 
+    addToLocalStorage(username, userpic);
+})
+
+const userpicForm = () => {
+    userpicmodal.style.display = "table";
 }
 
 closePic.addEventListener('click', () => {
-    userpic.style.display = "none";
+    userpicmodal.style.display = "none";
+    contactList.style.display = "block";
+    chatList.style.display = "block";
 })
