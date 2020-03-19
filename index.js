@@ -16,38 +16,50 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Chatroom
 
 var numUsers = 0;
+var contactlist = [];
 
 io.on('connection', (socket) => {
   var addedUser = false;
   var id = socket.id;
+  console.log('25 ' + contactlist);
+  // when the client emits 'add user', this listens and executes
+  socket.on('add user', (username, userlogin) => {
+    if (addedUser) return;
+    contactlist.push(userlogin);
+    
+    // we store the username in the socket session for this client
+    socket.username = username;
+    socket.userlogin = userlogin;
+    ++numUsers;
+    addedUser = true;
+    socket.emit('login', {
+      username: socket.username,
+      numUsers: numUsers,
+      userlogin: socket.userlogin,
+      id: id,
+    });
+    // console.log(socket.userlogin + ' login');
+
+    // echo globally (all clients) that a person has connected
+    socket.broadcast.emit('user joined', {
+      username: socket.username,
+      userlogin: socket.userlogin,
+      numUsers: numUsers
+    });
+
+    var clients = io.sockets.clients();
+    
+    // console.log(socket.userlogin + ' join');
+  });
+
   // when the client emits 'new message', this listens and executes
   socket.on('new message', (data) => {
+    console.log('57 ' + contactlist);
     // we tell the client to execute 'new message'
     socket.broadcast.emit('new message', {
       username: socket.username,
       message: data,
-      id: id
-    });
-  });
-
-  // when the client emits 'add user', this listens and executes
-  socket.on('add user', (username) => {
-    if (addedUser) return;
-    
-    // we store the username in the socket session for this client
-    socket.username = username;
-    ++numUsers;
-    addedUser = true;
-    socket.emit('login', {
-      numUsers: numUsers,
-      id: id,
-    });
-    // echo globally (all clients) that a person has connected
-    socket.broadcast.emit('user joined', {
-      username: socket.username,
-      id: id,
-      numUsers: numUsers,
-
+      userlogin: socket.userlogin
     });
   });
 
@@ -68,6 +80,9 @@ io.on('connection', (socket) => {
   // when the user disconnects.. perform this
   socket.on('disconnect', () => {
     if (addedUser) {
+      contactlist.splice(contactlist.indexOf(socket.userlogin));
+      console.log('84 ' + contactlist);
+
       --numUsers;
 
       // echo globally that this client has left

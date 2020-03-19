@@ -1,7 +1,7 @@
 // Initialize variables
 var loginPage = document.querySelector('.modal'); // The login page
 var usernameInput = document.querySelector('.usernameInput'); // Input for username
-var userNicknameInput = document.querySelector('.userNicknameInput'); // Input for username
+var loginInput = document.querySelector('.userNicknameInput'); // Input for username
 var loginButton = document.getElementById('loginButton'); //Login button
 
 var contactList = document.querySelector('.contact__list');//The contact list
@@ -25,7 +25,7 @@ var date;
 // Prompt for setting a username
 var username;
 var message;
-var usernickname;
+var userlogin;
 var connected = true;
 var typing = false;
 var lastTypingTime;
@@ -33,13 +33,13 @@ var userpicResult;
 
 var socket = io();
 
-const login = (usernameInput) => {
+const login = (usernameInput, loginInput) => {
     username = usernameInput.value;
-
-    if (!username) {
+    userlogin = loginInput.value;
+    if (!username || !userlogin) {
         alert('Заполните все поля');
     } else {
-        socket.emit('add user', username);
+        socket.emit('add user', username, userlogin);
         loginPage.style.display = "none";
         userpicmodal.style.display = "table";
     };
@@ -53,15 +53,17 @@ const login = (usernameInput) => {
 //     return contactData;
 // }
 
-const addToLocalStorage = function (socketid, userpic) {
-    localStorage.setItem(socketid, userpic);
+const addToLocalStorage = function (userlogin, userpic) {
+    localStorage.setItem(userlogin, userpic);
 }
 
-const addContact = (username) => {
+const addContact = (username, userlogin) => {
+    console.log('61 Add contact '+ username + ' login: ' + userlogin);
+    
     let id = socket.id;
     let keys = Object.keys(localStorage);
     for(let key of keys) {
-        if (username == key) {
+        if (userlogin == key) {
             let userpicture = localStorage.getItem(key);
             let li = document.createElement('li');
             li.classList.add('contact');
@@ -75,12 +77,12 @@ const addContact = (username) => {
 }
 const removeContact = (id) => {
     let contactToRemove = document.getElementById(id);
-    contactToRemove.parentNode.parentNode.removeChild(contactToRemove.parentNode);
+    contactToRemove.parentNode.removeChild(contactToRemove.parentNode);
 }
 
 // Button events
 loginButton.addEventListener('click', () => {
-    login(usernameInput);
+    login(usernameInput, loginInput);
     userpicForm();
     userpicSelect();
 
@@ -108,10 +110,13 @@ chatList.addEventListener('keydown', (e) => {
 
 const addChatMessage = (message) => {
     date = new Date().toLocaleString();
+    console.log(message);
     let keys = Object.keys(localStorage);
-    console.log(username, socket.id);
+
+    console.log('118 Имя пользователя: ' + username, 'Логин пользователя ' + userlogin + ' message: ' + message);
+
     for(let key of keys) {
-        if (username == key) {
+        if (userlogin == key) {
             let userpicture = localStorage.getItem(key);
             let li = document.createElement('li');
             li.innerHTML = `<span class="photo" style="background-image: url('${userpicture}')"></span>
@@ -120,9 +125,8 @@ const addChatMessage = (message) => {
                 <span class="message__date">${date}</span>
             </<span>`;
             messages.appendChild(li);
-        }
+        } 
     }
-
 }
 
 const sendMessage = (inputMessage) => {
@@ -132,7 +136,9 @@ const sendMessage = (inputMessage) => {
 }
 
 const replaceLastMessage = (message) => {
-
+    console.log(message);
+    let lastmessange = document.querySelector('.last__message')
+    lastmessange.innerText = message;
 }
 
 // Socket events
@@ -140,34 +146,35 @@ const replaceLastMessage = (message) => {
 // Whenever the server emits 'login', log the login message
 socket.on('login', (data) => {
     connected = true;
-    console.log(socket.id);
-    console.log(data.userData + ' дата при логине');
-    // addToLocalStorage(socket.id, userpic);
+    console.log('151 ' + Object.keys(data));
+    addContact(data.username, data.userlogin);
 
 });
 
+// Whenever the server emits 'user joined', log it in the chat body
+socket.on('user joined', (data) => {
+    console.log(154 + ' ' + Object.keys(data) + ' дата при join \n ' + userlogin + ' userlogin при join\n' + userpic);
+    addParticipantsMessage(data);
+    // addContact(data.username, data.userlogin);
+    
+
+});
 
 // Whenever the server emits 'new message', update the chat body
 socket.on('new message', (data) => {
     addChatMessage(data.message);
     console.log(data);
-    if (!username) {
+    replaceLastMessage(data.message);
+    if (!data.username) {
         socket.emit('add user', username);
-        addContact(data.username);
+        addContact(data.username, userlogin);
         addParticipantsMessage(data);
         console.log('дошёл сюда!');
     }
 
 });
 
-// Whenever the server emits 'user joined', log it in the chat body
-socket.on('user joined', (data) => {
-    console.log(data + ' дата при join');
-    addContact(data.username);
-    addParticipantsMessage(data);
-    addToLocalStorage(data.username, userpic);
 
-});
 
 // Whenever the server emits 'user left', log it in the chat body
 socket.on('user left', (data) => {
@@ -184,9 +191,9 @@ socket.on('disconnect', () => {
 
 socket.on('reconnect', () => {
     console.log('Вы переподключились');
-    if (username) {
-        socket.emit('add user', username);
-        addContact(data.username);
+    if (data.username) {
+        socket.emit('add user', data.username);
+        addContact(data.username, data.userlogin);
         addParticipantsMessage(data);
     }
 });
@@ -240,7 +247,7 @@ loadPic.addEventListener('click', () => {
     contactList.style.display = "block";
     chatList.style.display = "block";
 
-    addToLocalStorage(username, userpic);
+    addToLocalStorage(userlogin, userpic);
 })
 
 const userpicForm = () => {
