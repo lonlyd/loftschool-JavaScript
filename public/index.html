@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>LoftMessenger</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="contact__list">
+            <ul>
+                <li class="contact__list title">
+                    <div class="main__menu">
+                        <span id="burger">
+                            <i class="fas fa-bars"></i>
+                        </span>
+                        <span class="search">
+                            <input type="text" placeholder="Поиск..." id="search" />
+                        </span>
+                    </div>
+                </li>
+                <ul class="contact" id="contact">
+                </ul>
+            </ul>
+        </div>
+
+        <div class="chat__list">
+            <ul class="pages">
+                <li class="chat page">
+                    <div class="chatArea">
+                        <span class="status__line">Чат</span>
+                        <ul class="messages"></ul>
+                        <span><input class="inputMessage" type="text" placeholder="Введите сообщение..." >
+                        <input id="sendButton" class="sendButton" type="submit"></span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <div class="modal">
+            <div class="login">
+                <div class="form">
+                    <h1 class="title">Авторизация</h1>
+                    <input class="usernameInput" type="text" placeholder="Введите фамилию и имя"  autofocus required/>
+                    <br>
+                    <input class="userNicknameInput" id="userNicknameInput" type="text" placeholder="Введите свой ник" maxlength="14" required/>
+                    <br>
+                    <button id="loginButton">ВОЙТИ</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="userpic">
+            <div class="login">
+                <div class="form">
+                    <h1 class="title">Загрузка фото</h1>
+                    <img src="" id="userpic">
+                    <br>
+                    <input type="file" id="userpicInput"/ autofocus>
+                    <br>
+                    <button id="loadPic">СОХРАНИТЬ </button>
+                    <button id="closePic">ОТМЕНА</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script> -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/index.js"></script>
+    <script src="https://kit.fontawesome.com/b6341b1a2d.js" crossorigin="anonymous"></script>
+</body>
+
+</html>
